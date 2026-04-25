@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selamat ulang tahun</title>
+  <style>
+    :root {
+      --bg1: #ffe4ec;
+      --bg2: #f6f0ff;
+      --primary: #ff4f8b;
+      --secondary: #7b5cff;
+      --text: #2a2240;
+      --card: #ffffff;
+      --ok: #1ea672;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: linear-gradient(140deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .hero {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 24px;
+      padding: 26px 18px;
+      box-shadow: 0 12px 30px rgba(93, 58, 169, 0.15);
+      position: sticky;
+      top: 10px;
+      z-index: 2;
+      backdrop-filter: blur(6px);
+    }
+
+    .title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      margin: 0;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      margin: 8px 0 14px;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .button {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-weight: 700;
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+
+    .button:active { transform: scale(0.97); }
+
+    section {
+      margin-top: 22px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(93, 58, 169, 0.12);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: var(--secondary);
+      font-size: 1.2rem;
+    }
+
+    .scroll-wrap {
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .scroll-wrap::-webkit-scrollbar { width: 10px; }
+    .scroll-wrap::-webkit-scrollbar-thumb {
+      background: #d6ccff;
+      border-radius: 10px;
+    }
+
+    .testimoni-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1.5px solid #efe9ff;
+      border-radius: 14px;
+      padding: 13px;
+    }
+
+    .tokoh {
+      margin: 0 0 3px;
+      font-weight: 700;
+      color: #473877;
+    }
+
+    .peran {
+      margin: 0 0 8px;
+      font-size: 0.88rem;
+      opacity: 0.75;
+    }
+
+    .pesan {
+      margin: 0;
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+
+    .wish-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1.5px solid #efe9ff;
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin-bottom: 10px;
+    }
+
+    .wish-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--ok);
+      cursor: pointer;
+    }
+
+    .wish-item label {
+      flex: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .wish-item.done {
+      border-color: #c8f2e3;
+      background: #f2fffa;
+    }
+
+    .wish-item.done label {
+      text-decoration: line-through;
+      opacity: 0.75;
+    }
+
+    .progress {
+      margin-top: 12px;
+      font-weight: 600;
+      color: #374;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1 class="title">🎉 Selamat ulang tahun 🎂</h1>
+      <p class="subtitle">Semoga hari ini penuh tawa, syukur, dan hal-hal baik yang bertambah.</p>
+      <button id="randomWishBtn" class="button" type="button">Kasih Ucapan Acak ✨</button>
+      <p id="randomWishText" class="subtitle" aria-live="polite"></p>
+    </header>
+
+    <section>
+      <h2>📜 Dinding Ucapan (Scrollable)</h2>
+      <div class="scroll-wrap">
+        <div class="testimoni-grid" id="testimoniGrid"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>✅ Checklist Wishlist & Doa</h2>
+      <div id="wishlistBox"></div>
+      <p id="progressText" class="progress">0/0 tercapai</p>
+    </section>
+
+    <footer>
+      Dibuat dengan penuh semangat untuk momen spesial ulang tahun 💖
+    </footer>
+  </main>
+
+  <script>
+    const testimoniData = [
+      { tokoh: "Mama", peran: "Orang Tua", pesan: "Semoga panjang umur, rezekinya lancar, dan selalu jadi anak kebanggaan keluarga." },
+      { tokoh: "Papa", peran: "Orang Tua", pesan: "Tetap rendah hati, sehat selalu, dan jangan lupa bahagia tiap hari." },
+      { tokoh: "Alya", peran: "Sahabat Sekolah", pesan: "Happy birthday! Semoga semua rencana besar kamu tahun ini berjalan mulus." },
+      { tokoh: "Bimo", peran: "Teman Kuliah", pesan: "Semoga skripsi, kerjaan, dan hidupmu sama-sama auto lancar. Sukses terus!" },
+      { tokoh: "Nina", peran: "Tetangga", pesan: "Semoga rumahmu selalu dipenuhi tawa dan banyak kabar baik." },
+      { tokoh: "Pak RT", peran: "Tokoh Lingkungan", pesan: "Semoga makin dewasa, bijaksana, dan membawa manfaat untuk sekitar." },
+      { tokoh: "Chef Arga", peran: "Idola Kuliner", pesan: "Semoga hidupmu selalu seenak steak medium rare favoritmu!" },
+      { tokoh: "Kak Rani", peran: "Sepupu", pesan: "Semoga tahun ini jadi tahun penuh pencapaian dan momen tak terlupakan." },
+      { tokoh: "Tim Kantor", peran: "Rekan Kerja", pesan: "Selamat ulang tahun! Semoga semangatmu menular terus ke satu tim." },
+      { tokoh: "Diri Sendiri", peran: "Tokoh Utama", pesan: "Terima kasih sudah bertahan sejauh ini. Kamu hebat, terus melangkah ya!" },
+    ];
+
+    const randomWishes = [
+      "Semoga impian yang lama ditunggu akhirnya terwujud tahun ini.",
+      "Semoga langkahmu dimudahkan, urusanmu dilancarkan, dan hatimu ditenangkan.",
+      "Semoga bahagia selalu menemukan jalannya pulang ke kamu.",
+      "Semoga banyak kejutan baik datang tanpa harus diminta.",
+      "Semoga sehat, waras, dan tetap penuh syukur setiap harinya.",
+    ];
+
+    const wishlist = [
+      "keluarga bahagia",
+      "sehat sentosa semuanya",
+      "mendaftar haji",
+      "makan kue ulang tahun",
+      "makan steak di Cikito",
+      "neflix and chill",
+    ];
+
+    const testimoniGrid = document.getElementById("testimoniGrid");
+    const wishlistBox = document.getElementById("wishlistBox");
+    const progressText = document.getElementById("progressText");
+
+    function renderTestimoni() {
+      testimoniGrid.innerHTML = "";
+      testimoniData.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <p class="tokoh">${item.tokoh}</p>
+          <p class="peran">${item.peran}</p>
+          <p class="pesan">“${item.pesan}”</p>
+        `;
+        testimoniGrid.appendChild(card);
+      });
+    }
+
+    function getSavedChecklist() {
+      const raw = localStorage.getItem("ulangTahunChecklist");
+      try {
+        return raw ? JSON.parse(raw) : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveChecklist(data) {
+      localStorage.setItem("ulangTahunChecklist", JSON.stringify(data));
+    }
+
+    function updateProgress() {
+      const checks = [...document.querySelectorAll(".wish-item input")];
+      const done = checks.filter((c) => c.checked).length;
+      progressText.textContent = `${done}/${checks.length} tercapai`;
+    }
+
+    function renderWishlist() {
+      const saved = getSavedChecklist();
+      wishlistBox.innerHTML = "";
+
+      wishlist.forEach((text, idx) => {
+        const id = `wish-${idx}`;
+        const wrapper = document.createElement("div");
+        wrapper.className = "wish-item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.checked = Boolean(saved[id]);
+
+        const label = document.createElement("label");
+        label.setAttribute("for", id);
+        label.textContent = text;
+
+        if (checkbox.checked) wrapper.classList.add("done");
+
+        checkbox.addEventListener("change", () => {
+          const now = getSavedChecklist();
+          now[id] = checkbox.checked;
+          saveChecklist(now);
+          wrapper.classList.toggle("done", checkbox.checked);
+          updateProgress();
+        });
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+        wishlistBox.appendChild(wrapper);
+      });
+
+      updateProgress();
+    }
+
+    document.getElementById("randomWishBtn").addEventListener("click", () => {
+      const random = randomWishes[Math.floor(Math.random() * randomWishes.length)];
+      document.getElementById("randomWishText").textContent = `💌 ${random}`;
+    });
+
+    renderTestimoni();
+    renderWishlist();
+  </script>
+</body>
+</html>
